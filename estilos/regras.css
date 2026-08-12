@@ -1,0 +1,217 @@
+* {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #eef5fc;
+            color: #1a2b4c;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar */
+        header {
+            background: #ffffff;
+            padding: 15px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0d234a;
+            letter-spacing: -0.5px;
+        }
+
+        nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: #4a5568;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a.active, nav a:hover {
+            color: #0d234a;
+            border-bottom: 2px solid #0d234a;
+            padding-bottom: 4px;
+        }
+
+        .btn-header {
+            border: 1px solid #0d234a;
+            color: #0d234a;
+            padding: 8px 18px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* Hero Container (Dividido em Form/Card e Imagem) */
+        .main-container {
+            display: flex;
+            flex: 1;
+            min-height: calc(100vh - 120px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .content-section {
+            flex: 1;
+            padding: 40px 6% 60px 8%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        .image-section {
+            flex: 1;
+            background: url('https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=1200&auto=format&fit=crop') center/cover no-repeat;
+            border-top-left-radius: 180px;
+            border-bottom-left-radius: 180px;
+            position: relative;
+        }
+
+        /* Cartão Centralizado */
+        .title-hero {
+            font-size: 32px;
+            color: #0d234a;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle-hero {
+            color: #5a6a85;
+            font-size: 14px;
+            margin-bottom: 25px;
+            max-width: 480px;
+            line-height: 1.5;
+        }
+
+        .card {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(13, 35, 74, 0.08);
+            max-width: 480px;
+            width: 100%;
+        }
+
+        .info-block {
+            margin-bottom: 20px;
+        }
+
+        .info-block h3 {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #0d234a;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        .info-block p {
+            font-size: 13px;
+            color: #4a5568;
+            line-height: 1.4;
+        }
+
+        .highlight-box {
+            background: #f0f7ff;
+            border-left: 4px solid #0d234a;
+            padding: 12px;
+            border-radius: 4px;
+            margin: 15px 0;
+            font-size: 13px;
+            font-weight: 600;
+            color: #0d234a;
+        }
+
+        ul.fields-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            list-style: none;
+            margin: 15px 0;
+        }
+
+        ul.fields-list li {
+            font-size: 12px;
+            background: #f7fafc;
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-submit {
+            display: block;
+            width: 100%;
+            background: #0d234a;
+            color: #ffffff;
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            margin-top: 15px;
+            transition: background 0.3s;
+        }
+
+        .btn-submit:hover {
+            background: #163772;
+        }
+
+        .card-footer {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #edf2f7;
+            text-align: center;
+        }
+
+        .card-footer p {
+            font-size: 11px;
+            color: #718096;
+            margin-bottom: 4px;
+        }
+
+        .signature {
+            font-weight: 700;
+            color: #0d234a;
+            font-size: 13px;
+        }
+
+        /* Rodapé */
+        footer {
+            background: #0d234a;
+            color: #ffffff;
+            padding: 15px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        /* Adaptabilidade para telas menores */
+        @media (max-width: 900px) {
+            .main-container {
+                flex-direction: column;
+            }
+            .image-section {
+                display: none;
+            }
+            .content-section {
+                padding: 30px 20px;
+                align-items: center;
+            }
+        }

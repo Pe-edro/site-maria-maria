@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form maria maria</title>
+    <link rel="icon" href="favicon.ico"/>
+</head>
+<body>
+    
+    <h1>Preencha com seus dados</h1> 
+    <form>
+        <!--Formulario de Nome -->
+        <label for="campo_nome">Nome:</label>
+        <input id="campo_nome" type="text" placeholder="Digite seu nome completo" required><br><br>
+        
+        <!--Formulario de RG-->
+        <label for="campo_rg">Digite seu RG:</label>
+        <input id="campo_rg" type="text" placeholder="Ex:11.222.333-4" required><br><br>
+        
+        <!--Formulario de cpf -->
+        <label for="campo_cpf">Digite seu CPF:</label>
+        <input id="campo_cpf" type="text" placeholder="Ex:111.222.333-45" required><br><br>
+        
+        <!--Formulario de Idade -->
+        <label for="campo_idade">Digite sua Idade:</label>
+        <input id="campo_idade" type="text" placeholder="Digite seu idade aqui" required><br><br>
+        
+        <!--Formulario de endereço -->
+        <label for="campo_end">End/ Bairro/ Região:</label>
+        <input id="campo_end" type="text" placeholder="End/ Bairro/ Região" required><br><br>
+        
+        <!--Formulario de pix -->
+        <label for="campo_pix">Digite seu pix:</label>
+        <input id="campo_pix" type="text" placeholder="Digite seu pix" required><br><br>
+
+        <!--Formulario de Telefone para contato -->
+        <label for="campo_contato">Telefone de contato para emergência:</label>
+        <input id="campo_contato" type="text" placeholder="Digite telefone de emergência" required><br><br>
+
+         <!--Formulario de nome do contato -->
+        <label for="campo_name_contato">Nome contato de emergência:</label>
+        <input id="campo_name_contato" type="text" placeholder="Nome" required><br><br>
+
+        <!--escolha de transporte publico ou propio-->
+        <p><strong>Transporte publico ou própio?</strong></p>
+        <input type="radio" id="op_pub" name="saudacao" value="Público" checked>
+        <label for="op_pub">Público</label>
+
+        <input type="radio" id="op_priv" name="saudacao" value="Própio">
+        <label for="op_priv">Própio</label>
+        <br><br>
+        <!--botao para envio-->
+        <button type="button" onclick="enviarParaWhatsapp()" style="background-color: #25D366; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
+            Enviar dados
+        </button>
+        
+    </form>
+    <script>
+function enviarParaWhatsapp() {
+    // 1. Pega os valores dos campos
+    const nome = document.getElementById('campo_nome').value;
+    const rg = document.getElementById('campo_rg').value;
+    const cpf = document.getElementById('campo_cpf').value;
+    const idade = document.getElementById('campo_idade').value;
+    const endereco = document.getElementById('campo_end').value;
+    const pix = document.getElementById('campo_pix').value;
+    const contato = document.getElementById('campo_contato').value;
+    const name = document.getElementById('campo_name_contato').value;
+
+    if (nome === "" || rg === "" || cpf === "" || idade === "" || endereco === "" || pix === "") {
+        alert("Por favor, preencha todos os campos antes de enviar!");
+        return 0;} // Isso faz a função parar aqui e não abre o WhatsApp
+
+    // --- NOVA LINHA PARA PEGAR A ESCOLHA ---
+    // Ele procura qual input com o nome 'saudacao' está marcado (:checked)
+    const saudacao = document.querySelector('input[name="saudacao"]:checked').value;
+
+    // 2. Define o seu número de WhatsApp (55 + DDD + Numero)
+    const meuNumero = "5511974723501"; 
+
+    // 3. Monta a mensagem (o \n serve para quebrar a linha no WhatsApp)
+    const mensagem = "Olá! Seguem meus dados:\n\n" +
+                     "*Nome:* " + nome + "\n" +
+                     "*RG:* " + rg + "\n" +
+                     "*CPF:* " + cpf + "\n" +
+                     "*Idade:* " + idade + "\n" +
+                     "*Endereço:* " + endereco + "\n" +
+                     "*Pix:* " + pix + "\n" +
+                     "*Telefone para contato:* " + contato + "\n" +
+                     "*Nome:* " + name + "\n" +
+                     "*Transporte publico ou própio?:* " + saudacao;
+
+    // 4. Codifica a mensagem para o formato de link (URL)
+    const mensagemCodificada = encodeURIComponent(mensagem);
+
+    // 5. Abre o link do WhatsApp em uma nova aba
+    window.open("https://wa.me/" + meuNumero + "?text=" + mensagemCodificada, "_blank");
+}
+</script><br><br>
+<hr>
+<p>esse site esta em sua primeira versão e está sendo desenvolvido pelo propio Pedro qualquer erro comunicar.</p>
+</body>
+</html>
