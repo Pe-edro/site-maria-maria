@@ -1,0 +1,431 @@
+ :root {
+      --primary-navy: #0B2341;
+      --secondary-navy: #163860;
+      --accent-burgundy: #7A1C32;
+      --bg-soft-blue: #EBF3FB;
+      --card-bg: #FFFFFF;
+      --text-main: #1E293B;
+      --text-muted: #64748B;
+      --border-color: #D0E1F0;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    
+    body { 
+      background-color: var(--bg-soft-blue); 
+      color: var(--text-main); 
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* NAV BAR - Estilo Maria Maria Festeira */
+    .navbar {
+      background: #ffffff;
+      padding: 12px 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(11, 35, 65, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand-logo {
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+    }
+
+    .logo-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary-navy);
+      line-height: 1;
+    }
+
+    .logo-subtitle {
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .nav-menu {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+      align-items: center;
+    }
+
+    .nav-menu a {
+      text-decoration: none;
+      color: var(--primary-navy);
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+
+    .nav-menu a:hover, .nav-menu a.active {
+      color: var(--accent-burgundy);
+      border-bottom: 2px solid var(--accent-burgundy);
+      padding-bottom: 2px;
+    }
+
+    .btn-nav-action {
+      background: transparent;
+      border: 1.5px solid var(--primary-navy);
+      color: var(--primary-navy) !important;
+      padding: 8px 16px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600 !important;
+    }
+
+    /* CONTAINER PRINCIPAL */
+    .main-wrapper {
+      flex: 1;
+      max-width: 1350px;
+      width: 100%;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    .page-title-box {
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .page-title-box h1 {
+      font-family: 'Playfair Display', serif;
+      color: var(--primary-navy);
+      font-size: 2.2rem;
+      margin-bottom: 6px;
+    }
+
+    .page-title-box p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .app-container { 
+      display: flex; 
+      gap: 24px; 
+      align-items: flex-start;
+    }
+
+    /* CALENDÁRIO */
+    .calendar-card { 
+      flex: 1; 
+      min-width: 320px; 
+      background: var(--card-bg); 
+      padding: 24px; 
+      border-radius: 16px; 
+      box-shadow: 0 10px 25px rgba(11, 35, 65, 0.05); 
+      border: 1px solid rgba(208, 225, 240, 0.6);
+    }
+
+    .calendar-header { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      margin-bottom: 20px; 
+    }
+
+    .calendar-header h2 { 
+      font-family: 'Playfair Display', serif;
+      margin: 0; 
+      font-size: 1.3rem; 
+      color: var(--primary-navy);
+    }
+
+    .calendar-header button { 
+      cursor: pointer; 
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--border-color); 
+      background: #fff; 
+      border-radius: 50%; 
+      color: var(--primary-navy);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .calendar-header button:hover {
+      background: var(--bg-soft-blue);
+    }
+
+    .weekdays { 
+      display: grid; 
+      grid-template-columns: repeat(7, 1fr); 
+      text-align: center; 
+      font-weight: 700; 
+      margin-bottom: 12px; 
+      color: var(--primary-navy); 
+      font-size: 0.8rem; 
+      text-transform: uppercase;
+    }
+
+    .days-grid { 
+      display: grid; 
+      grid-template-columns: repeat(7, 1fr); 
+      gap: 8px; 
+    }
+
+    .day-cell { 
+      min-height: 75px; 
+      border-radius: 10px; 
+      padding: 8px; 
+      background: #F8FAFC; 
+      border: 1px solid var(--border-color); 
+      cursor: pointer; 
+      display: flex; 
+      flex-direction: column; 
+      justify-content: space-between; 
+      transition: all 0.2s;
+    }
+
+    .day-cell:hover { 
+      background: var(--bg-soft-blue); 
+      border-color: var(--secondary-navy);
+    }
+
+    .day-cell.empty { background: transparent; border: none; cursor: default; }
+    
+    .day-cell.selected { 
+      border: 2px solid var(--primary-navy); 
+      background: #E1EDF7; 
+    }
+
+    .day-num { font-size: 0.85rem; font-weight: 700; color: var(--primary-navy); }
+
+    .event-indicator { 
+      font-size: 0.68rem; 
+      background: var(--primary-navy); 
+      color: #fff; 
+      padding: 3px 6px; 
+      border-radius: 4px; 
+      overflow: hidden; 
+      white-space: nowrap; 
+      text-overflow: ellipsis; 
+      margin-top: 4px; 
+      font-weight: 500;
+    }
+
+    /* FICHA DO EVENTO */
+    .details-card { 
+      flex: 1.5; 
+      min-width: 340px; 
+      background: var(--card-bg); 
+      padding: 28px; 
+      border-radius: 16px; 
+      box-shadow: 0 10px 25px rgba(11, 35, 65, 0.05); 
+      border: 1px solid rgba(208, 225, 240, 0.6);
+    }
+
+    .details-header { 
+      border-bottom: 2px solid var(--bg-soft-blue); 
+      padding-bottom: 12px; 
+      margin-bottom: 20px; 
+    }
+
+    .details-header h3 { 
+      font-family: 'Playfair Display', serif;
+      margin: 0; 
+      color: var(--primary-navy); 
+      font-size: 1.4rem; 
+    }
+
+    /* ABAS DE EVENTOS */
+    .event-tabs { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 18px; padding-bottom: 6px; }
+    
+    .tab-btn { 
+      padding: 8px 16px; 
+      border-radius: 20px; 
+      background: var(--bg-soft-blue); 
+      border: 1px solid var(--border-color); 
+      font-size: 0.82rem; 
+      cursor: pointer; 
+      font-weight: 600; 
+      color: var(--primary-navy);
+      white-space: nowrap; 
+    }
+
+    .tab-btn.active { 
+      background: var(--primary-navy); 
+      color: #fff; 
+      border-color: var(--primary-navy); 
+    }
+
+    .tab-btn.new-btn { 
+      background: #FFF; 
+      color: var(--accent-burgundy); 
+      border: 1px dashed var(--accent-burgundy); 
+    }
+
+    /* FORMULÁRIO */
+    .section-title { 
+      font-size: 0.9rem; 
+      font-weight: 700; 
+      color: var(--accent-burgundy); 
+      margin: 20px 0 10px 0; 
+      border-bottom: 1px solid var(--bg-soft-blue); 
+      padding-bottom: 4px; 
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 5px; color: var(--primary-navy); }
+    
+    .form-group input, .form-group select, .form-group textarea { 
+      width: 100%; 
+      padding: 10px 12px; 
+      border: 1px solid var(--border-color); 
+      border-radius: 8px; 
+      font-size: 0.9rem; 
+      background: #FAFCFE;
+      color: var(--text-main);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: var(--primary-navy);
+      background: #FFF;
+    }
+
+    .form-group textarea { resize: vertical; min-height: 80px; }
+
+    .row { display: flex; gap: 12px; }
+    .row .form-group { flex: 1; }
+
+    .actions { display: flex; gap: 10px; margin-top: 24px; flex-wrap: wrap; }
+    
+    .btn { 
+      flex: 1; 
+      min-width: 140px;
+      padding: 12px; 
+      border: none; 
+      border-radius: 24px; 
+      font-weight: 600; 
+      cursor: pointer; 
+      font-size: 0.9rem; 
+      text-align: center; 
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-save { background: var(--primary-navy); color: #fff; }
+    .btn-save:hover { background: var(--secondary-navy); }
+    
+    .btn-print { background: #059669; color: #fff; }
+    .btn-print:hover { background: #047857; }
+    
+    .btn-delete { background: #FEE2E2; color: #DC2626; border: 1px solid #FCA5A5; }
+    .btn-delete:hover { background: #FECACA; }
+
+    /* RODAPÉ ESTILO MARIA MARIA */
+    .footer {
+      background: var(--primary-navy);
+      color: #ffffff;
+      padding: 24px 5%;
+      margin-top: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 0.85rem;
+    }
+
+    .footer-left span { opacity: 0.8; }
+
+    .footer-socials {
+      display: flex;
+      gap: 12px;
+    }
+
+    .footer-socials a {
+      color: #fff;
+      width: 32px;
+      height: 32px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .footer-socials a:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* RESPONSIVIDADE PARA DISPOSITIVOS MÓVEIS (CELULARES E TABLETS) */
+    @media (max-width: 900px) {
+      .app-container {
+        flex-direction: column;
+      }
+
+      .calendar-card, .details-card {
+        width: 100%;
+        min-width: 100%;
+      }
+
+      .nav-menu {
+        display: none; /* Simplificado para mobile */
+      }
+
+      .navbar {
+        justify-content: center;
+      }
+
+      .main-wrapper {
+        margin: 15px auto;
+        padding: 0 12px;
+      }
+
+      .day-cell {
+        min-height: 60px;
+        padding: 4px;
+      }
+
+      .event-indicator {
+        font-size: 0.6rem;
+        padding: 2px 4px;
+      }
+
+      .row {
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .footer {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
+    /* FORMATO DE IMPRESSÃO / SALVAR EM PDF */
+    @media print {
+      body { background: #fff; padding: 0; }
+      .navbar, .footer, .calendar-card, .event-tabs, .actions, .page-title-box { display: none !important; }
+      .main-wrapper { margin: 0; padding: 0; max-width: 100%; }
+      .details-card { box-shadow: none; border: none; padding: 0; width: 100%; }
+      .details-header h3 { font-size: 1.8rem; text-transform: uppercase; }
+      .section-title { color: #000; border-bottom: 1px solid #000; margin-top: 15px; }
+      .form-group input, .form-group select, .form-group textarea { 
+        border: none; padding: 0; background: transparent; font-size: 1rem; color: #000;
+      }
+    }
