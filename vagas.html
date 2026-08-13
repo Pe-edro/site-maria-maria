@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  
+  <link rel="stylesheet" href="estilos/calendario.css">
   <!-- Ícones FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -138,8 +138,7 @@
   let currentDate = new Date();
   let selectedDateKey = "";
   let activeEventIndex = null;
-
-  const events = JSON.parse(localStorage.getItem('mmf_events_data') || '{}');
+  let events = {}; // Será preenchido pelo Banco de Dados
 
   const monthYearElem = document.getElementById('monthYear');
   const daysGrid = document.getElementById('daysGrid');
@@ -148,6 +147,20 @@
   const detailedForm = document.getElementById('detailedForm');
   const deleteBtn = document.getElementById('deleteBtn');
   const printBtn = document.getElementById('printBtn');
+
+  // CARREGAR EVENTOS DO BANCO
+  function carregarEventosDoBanco() {
+    fetch('buscar_eventos.php')
+      .then(res => res.json())
+      .then(data => {
+        events = data;
+        renderCalendar();
+        if (selectedDateKey) {
+          renderTabs();
+        }
+      })
+      .catch(err => console.error("Erro ao buscar eventos:", err));
+  }
 
   function renderCalendar() {
     daysGrid.innerHTML = '';
@@ -251,6 +264,7 @@
     document.getElementById('eventSchedule').value = ev.schedule || '';
     document.getElementById('menuDetailed').value = ev.menu || '';
     document.getElementById('drinksDetailed').value = ev.drinks || '';
+    document.getElementById('eventNotes').value = ev.notes || '';
 
     deleteBtn.style.display = 'inline-flex';
     printBtn.style.display = 'inline-flex';
@@ -265,6 +279,7 @@
     renderTabs();
   }
 
+  // SALVAR NO BANCO
   detailedForm.addEventListener('submit', (e) => {
     e.preventDefault();
     if (!selectedDateKey) {
@@ -272,50 +287,62 @@
       return;
     }
 
+    const currentEvent = (events[selectedDateKey] && activeEventIndex !== null) ? events[selectedDateKey][activeEventIndex] : null;
+
     const eventData = {
+      id: currentEvent ? currentEvent.id : null,
+      data_evento: selectedDateKey,
       name: document.getElementById('clientName').value,
       type: document.getElementById('eventType').value,
       guests: document.getElementById('guestCount').value,
       description: document.getElementById('eventDescription').value,
       schedule: document.getElementById('eventSchedule').value,
       menu: document.getElementById('menuDetailed').value,
-      drinks: document.getElementById('drinksDetailed').value
+      drinks: document.getElementById('drinksDetailed').value,
+      notes: document.getElementById('eventNotes').value
     };
 
-    if (!events[selectedDateKey]) events[selectedDateKey] = [];
-
-    if (activeEventIndex !== null) {
-      events[selectedDateKey][activeEventIndex] = eventData;
-    } else {
-      events[selectedDateKey].push(eventData);
-      activeEventIndex = events[selectedDateKey].length - 1;
-    }
-
-    localStorage.setItem('mmf_events_data', JSON.stringify(events));
-    renderCalendar();
-    renderTabs();
-    deleteBtn.style.display = 'inline-flex';
-    printBtn.style.display = 'inline-flex';
-    alert("Ficha do evento salva com sucesso!");
+    fetch('salvar_evento.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(eventData)
+    })
+    .then(res => res.json())
+    .then(res => {
+      if (res.sucesso) {
+        alert("Ficha do evento salva com sucesso no Banco de Dados!");
+        carregarEventosDoBanco();
+      } else {
+        alert("Erro ao salvar: " + res.erro);
+      }
+    });
   });
 
-  printBtn.addEventListener('click', () => { window.print(); });
-
+  // EXCLUIR DO BANCO
   deleteBtn.addEventListener('click', () => {
     if (selectedDateKey && activeEventIndex !== null && events[selectedDateKey]) {
-      if (confirm("Deseja realmente excluir esta ficha de evento?")) {
-        events[selectedDateKey].splice(activeEventIndex, 1);
-        localStorage.setItem('mmf_events_data', JSON.stringify(events));
-
-        if (events[selectedDateKey].length > 0) {
-          loadEventIntoForm(0);
-        } else {
-          prepareNewEventForm();
-        }
-        renderCalendar();
+      const ev = events[selectedDateKey][activeEventIndex];
+      if (confirm("Deseja realmente excluir esta ficha do Banco de Dados?")) {
+        fetch('excluir_evento.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: ev.id })
+        })
+        .then(res => res.json())
+        .then(res => {
+          if (res.sucesso) {
+            alert("Evento excluído!");
+            prepareNewEventForm();
+            carregarEventosDoBanco();
+          } else {
+            alert("Erro ao excluir: " + res.erro);
+          }
+        });
       }
     }
   });
+
+  printBtn.addEventListener('click', () => { window.print(); });
 
   document.getElementById('prevBtn').addEventListener('click', () => {
     currentDate.setMonth(currentDate.getMonth() - 1);
@@ -327,7 +354,8 @@
     renderCalendar();
   });
 
-  renderCalendar();
+  // Iniciar buscando os dados reais do PHP
+  carregarEventosDoBanco();
 </script>
 
 </body>
