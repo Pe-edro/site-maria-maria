@@ -417,15 +417,122 @@
       }
     }
 
-    /* FORMATO DE IMPRESSÃO / SALVAR EM PDF */
+   /* FORMATO DE IMPRESSÃO / SALVAR EM PDF */
     @media print {
-      body { background: #fff; padding: 0; }
-      .navbar, .footer, .calendar-card, .event-tabs, .actions, .page-title-box { display: none !important; }
-      .main-wrapper { margin: 0; padding: 0; max-width: 100%; }
-      .details-card { box-shadow: none; border: none; padding: 0; width: 100%; }
-      .details-header h3 { font-size: 1.8rem; text-transform: uppercase; }
-      .section-title { color: #000; border-bottom: 1px solid #000; margin-top: 15px; }
-      .form-group input, .form-group select, .form-group textarea { 
-        border: none; padding: 0; background: transparent; font-size: 1rem; color: #000;
+      @page {
+        size: A4 portrait;
+        margin: 12mm 15mm;
+      }
+
+      body {
+        background: #fff !important;
+        color: #000 !important;
+        padding: 0 !important;
+        font-size: 10pt;
+      }
+
+      .navbar, 
+      .footer, 
+      .calendar-card, 
+      .event-tabs, 
+      .actions, 
+      .page-title-box { 
+        display: none !important; 
+      }
+
+      .main-wrapper { 
+        margin: 0 !important; 
+        padding: 0 !important; 
+        max-width: 100% !important; 
+        width: 100% !important;
+      }
+
+      .details-card { 
+        box-shadow: none !important; 
+        border: none !important; 
+        padding: 0 !important; 
+        width: 100% !important; 
+      }
+
+      .details-header::before {
+        content: "MARIA MARIA FESTEIRA • BUFFET EM DOMICÍLIO";
+        display: block;
+        font-family: 'Playfair Display', serif;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #0B2341;
+        border-bottom: 2px solid #0B2341;
+        padding-bottom: 4px;
+        margin-bottom: 12px;
+        letter-spacing: 1px;
+      }
+
+      .details-header {
+        border-bottom: 1px dashed #666;
+        padding-bottom: 6px;
+        margin-bottom: 12px;
+      }
+
+      .details-header h3 { 
+        font-size: 1.4rem !important; 
+        color: #000 !important;
+      }
+
+      .section-title { 
+        color: #000 !important; 
+        border-bottom: 1.5px solid #000 !important; 
+        margin-top: 12px !important; 
+        margin-bottom: 6px !important;
+        font-size: 0.9rem !important;
+        page-break-after: avoid;
+      }
+
+      .form-group {
+        margin-bottom: 8px !important;
+        page-break-inside: avoid;
+      }
+
+      .form-group label {
+        color: #444 !important;
+        font-size: 0.8rem !important;
+        margin-bottom: 2px !important;
+      }
+
+      .form-group input, 
+      .form-group select { 
+        border: none !important; 
+        padding: 0 !important; 
+        background: transparent !important; 
+        font-size: 0.95rem !important; 
+        color: #000 !important;
+        box-shadow: none !important;
+        appearance: none;
+        -webkit-appearance: none;
+      }
+
+      /* Configuração para mostrar todo o texto do textarea na impressão */
+      .form-group textarea {
+        border: none !important;
+        padding: 0 !important;
+        background: transparent !important;
+        font-size: 0.95rem !important;
+        color: #000 !important;
+        box-shadow: none !important;
+        overflow: visible !important; /* Esconde barras de rolagem */
+        resize: none !important;
+        white-space: pre-wrap !important;
+        word-wrap: break-word !important;
+        display: block !important;
+        width: 100% !important;
+      }
+
+      .row { 
+        display: flex !important; 
+        flex-direction: row !important;
+        gap: 20px !important; 
+      }
+
+      .row .form-group { 
+        flex: 1 !important; 
       }
     }

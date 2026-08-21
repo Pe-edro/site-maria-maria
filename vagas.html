@@ -5,14 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Maria Maria Festeira - Gestão de Eventos</title>
   
-  <!-- Fontes Google para corresponder ao site -->
+  <!-- Fontes Google -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="estilos/calendario.css">
   <!-- Ícones FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
 </head>
 <body>
 
@@ -64,9 +63,15 @@
         <form id="detailedForm">
           <!-- 1. Identificação -->
           <div class="section-title">1. Identificação do Evento</div>
+          
           <div class="form-group">
-            <label>Nome Completo do Cliente / Endereço do Evento</label>
-            <input type="text" id="clientName" placeholder="Ex: Rua das Flores, 123 - Clara" required />
+            <label>Nome Completo do Cliente</label>
+            <input type="text" id="clientName" placeholder="Ex: Clara Silva" required />
+          </div>
+
+          <div class="form-group">
+            <label>Endereço do Evento</label>
+            <input type="text" id="eventAddress" placeholder="Ex: Rua das Flores, 123 - Bairro" />
           </div>
 
           <div class="row">
@@ -96,7 +101,7 @@
           <div class="section-title">3. Doces & Personalizados</div>
           <div class="form-group">
             <label>Doces & Personalizados</label>
-            <textarea id="eventSchedule" placeholder="Ex: Doces de tradicionais, personalizados com o nome da criança..."></textarea>
+            <textarea id="eventSchedule" placeholder="Ex: Doces tradicionais, personalizados com o nome da criança..."></textarea>
           </div>
 
           <!-- 4. Cardápio -->
@@ -104,12 +109,6 @@
           <div class="form-group">
             <label>Menu Selecionado</label>
             <textarea id="menuDetailed" placeholder="Ex: Entrada de mini quiches, Finger Foods variados, Massa recheada como prato principal..."></textarea>
-          </div>
-
-          <div class="section-title">5.Bebidas</div>
-          <div class="form-group">
-            <label>Menu Selecionado</label>
-            <textarea id="drinksDetailed" placeholder="Ex: Coca-Cola, Suco , Agua com e sem gás, Coquetéis sem álcool..."></textarea>
           </div>
 
           <div class="actions">
@@ -134,229 +133,285 @@
     </div>
   </footer>
 
-<script>
-  let currentDate = new Date();
-  let selectedDateKey = "";
-  let activeEventIndex = null;
-  let events = {}; // Será preenchido pelo Banco de Dados
+  <!-- SCRIPT EXTERNO NA PASTA JS -->
+  <script>
+let currentDate = new Date();
+let selectedDateKey = "";
+let activeEventIndex = null;
+let events = {};
 
-  const monthYearElem = document.getElementById('monthYear');
-  const daysGrid = document.getElementById('daysGrid');
-  const selectedDateTitle = document.getElementById('selectedDateTitle');
-  const eventTabsContainer = document.getElementById('eventTabsContainer');
-  const detailedForm = document.getElementById('detailedForm');
-  const deleteBtn = document.getElementById('deleteBtn');
-  const printBtn = document.getElementById('printBtn');
+const monthYearElem = document.getElementById('monthYear');
+const daysGrid = document.getElementById('daysGrid');
+const selectedDateTitle = document.getElementById('selectedDateTitle');
+const eventTabsContainer = document.getElementById('eventTabsContainer');
+const detailedForm = document.getElementById('detailedForm');
+const deleteBtn = document.getElementById('deleteBtn');
+const printBtn = document.getElementById('printBtn');
 
-  // CARREGAR EVENTOS DO BANCO
-  function carregarEventosDoBanco() {
-    fetch('buscar_eventos.php')
-      .then(res => res.json())
-      .then(data => {
-        events = data;
-        renderCalendar();
-        if (selectedDateKey) {
-          renderTabs();
-        }
-      })
-      .catch(err => console.error("Erro ao buscar eventos:", err));
-  }
+// Funções auxiliares para leitura/preenchimento seguro dos inputs
+function getValue(id) {
+  const el = document.getElementById(id);
+  return el ? el.value : '';
+}
 
-  function renderCalendar() {
-    daysGrid.innerHTML = '';
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
+function setValue(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.value = val || '';
+}
 
-    const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-    monthYearElem.innerText = `${monthNames[month]} ${year}`;
+// Limpa quebras de linha excessivas mantendo apenas 1 entre parágrafos
+function limparQuebrasExcessivas(texto) {
+  if (!texto) return '';
+  return texto.replace(/\n\s*\n+/g, '\n').trim();
+}
 
-    const firstDayIndex = new Date(year, month, 1).getDay();
-    const lastDay = new Date(year, month + 1, 0).getDate();
-
-    for (let i = 0; i < firstDayIndex; i++) {
-      const emptyCell = document.createElement('div');
-      emptyCell.classList.add('day-cell', 'empty');
-      daysGrid.appendChild(emptyCell);
-    }
-
-    for (let day = 1; day <= lastDay; day++) {
-      const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-      const cell = document.createElement('div');
-      cell.classList.add('day-cell');
-      
-      if (dateKey === selectedDateKey) cell.classList.add('selected');
-
-      const dayNum = document.createElement('span');
-      dayNum.classList.add('day-num');
-      dayNum.innerText = day;
-      cell.appendChild(dayNum);
-
-      if (events[dateKey] && events[dateKey].length > 0) {
-        events[dateKey].forEach((ev) => {
-          const badge = document.createElement('div');
-          badge.classList.add('event-indicator');
-          badge.innerText = ev.name || 'Evento sem título';
-          cell.appendChild(badge);
-        });
-      }
-
-      cell.addEventListener('click', () => selectDate(dateKey, cell));
-      daysGrid.appendChild(cell);
-    }
-  }
-
-  function selectDate(dateKey, element) {
-    selectedDateKey = dateKey;
-    document.querySelectorAll('.day-cell').forEach(c => c.classList.remove('selected'));
-    element.classList.add('selected');
-
-    const [y, m, d] = dateKey.split('-');
-    selectedDateTitle.innerText = `Ficha do Evento - ${d}/${m}/${y}`;
-
-    if (!events[dateKey]) events[dateKey] = [];
-
-    if (events[dateKey].length > 0) {
-      loadEventIntoForm(0);
-    } else {
-      prepareNewEventForm();
-    }
-
-    renderTabs();
-  }
-
-  function renderTabs() {
-    eventTabsContainer.innerHTML = '';
-    const dayEvents = events[selectedDateKey] || [];
-
-    if (dayEvents.length === 0) {
-      eventTabsContainer.style.display = 'none';
-      return;
-    }
-
-    eventTabsContainer.style.display = 'flex';
-
-    dayEvents.forEach((ev, idx) => {
-      const tab = document.createElement('button');
-      tab.type = 'button';
-      tab.classList.add('tab-btn');
-      if (idx === activeEventIndex) tab.classList.add('active');
-      tab.innerText = ev.name ? ev.name.substring(0, 18) + '...' : `Evento ${idx + 1}`;
-      tab.addEventListener('click', () => loadEventIntoForm(idx));
-      eventTabsContainer.appendChild(tab);
-    });
-
-    const addTab = document.createElement('button');
-    addTab.type = 'button';
-    addTab.classList.add('tab-btn', 'new-btn');
-    addTab.innerText = '+ Criar Outro Evento';
-    addTab.addEventListener('click', prepareNewEventForm);
-    eventTabsContainer.appendChild(addTab);
-  }
-
-  function loadEventIntoForm(index) {
-    activeEventIndex = index;
-    const ev = events[selectedDateKey][index];
-
-    document.getElementById('clientName').value = ev.name || '';
-    document.getElementById('eventType').value = ev.type || 'Casamento';
-    document.getElementById('guestCount').value = ev.guests || '';
-    document.getElementById('eventDescription').value = ev.description || '';
-    document.getElementById('eventSchedule').value = ev.schedule || '';
-    document.getElementById('menuDetailed').value = ev.menu || '';
-    document.getElementById('drinksDetailed').value = ev.drinks || '';
-    document.getElementById('eventNotes').value = ev.notes || '';
-
-    deleteBtn.style.display = 'inline-flex';
-    printBtn.style.display = 'inline-flex';
-    renderTabs();
-  }
-
-  function prepareNewEventForm() {
-    activeEventIndex = null;
-    detailedForm.reset();
-    deleteBtn.style.display = 'none';
-    printBtn.style.display = 'none';
-    renderTabs();
-  }
-
-  // SALVAR NO BANCO
-  detailedForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    if (!selectedDateKey) {
-      alert("Por favor, selecione uma data no calendário.");
-      return;
-    }
-
-    const currentEvent = (events[selectedDateKey] && activeEventIndex !== null) ? events[selectedDateKey][activeEventIndex] : null;
-
-    const eventData = {
-      id: currentEvent ? currentEvent.id : null,
-      data_evento: selectedDateKey,
-      name: document.getElementById('clientName').value,
-      type: document.getElementById('eventType').value,
-      guests: document.getElementById('guestCount').value,
-      description: document.getElementById('eventDescription').value,
-      schedule: document.getElementById('eventSchedule').value,
-      menu: document.getElementById('menuDetailed').value,
-      drinks: document.getElementById('drinksDetailed').value,
-      notes: document.getElementById('eventNotes').value
-    };
-
-    fetch('salvar_evento.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(eventData)
-    })
+// CARREGAR EVENTOS DO BANCO
+function carregarEventosDoBanco() {
+  fetch('P_H_P/buscar_eventos.php')
     .then(res => res.json())
-    .then(res => {
-      if (res.sucesso) {
-        alert("Ficha do evento salva com sucesso no Banco de Dados!");
-        carregarEventosDoBanco();
-      } else {
-        alert("Erro ao salvar: " + res.erro);
+    .then(data => {
+      events = data;
+      renderCalendar();
+      if (selectedDateKey) {
+        renderTabs();
       }
-    });
+    })
+    .catch(err => console.error("Erro ao buscar eventos:", err));
+}
+
+function renderCalendar() {
+  daysGrid.innerHTML = '';
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+
+  const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+  monthYearElem.innerText = `${monthNames[month]} ${year}`;
+
+  const firstDayIndex = new Date(year, month, 1).getDay();
+  const lastDay = new Date(year, month + 1, 0).getDate();
+
+  for (let i = 0; i < firstDayIndex; i++) {
+    const emptyCell = document.createElement('div');
+    emptyCell.classList.add('day-cell', 'empty');
+    daysGrid.appendChild(emptyCell);
+  }
+
+  for (let day = 1; day <= lastDay; day++) {
+    const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const cell = document.createElement('div');
+    cell.classList.add('day-cell');
+    
+    if (dateKey === selectedDateKey) cell.classList.add('selected');
+
+    const dayNum = document.createElement('span');
+    dayNum.classList.add('day-num');
+    dayNum.innerText = day;
+    cell.appendChild(dayNum);
+
+    if (events[dateKey] && events[dateKey].length > 0) {
+      events[dateKey].forEach((ev) => {
+        const badge = document.createElement('div');
+        badge.classList.add('event-indicator');
+        badge.innerText = ev.name || 'Evento sem título';
+        cell.appendChild(badge);
+      });
+    }
+
+    cell.addEventListener('click', () => selectDate(dateKey, cell));
+    daysGrid.appendChild(cell);
+  }
+}
+
+function selectDate(dateKey, element) {
+  selectedDateKey = dateKey;
+  document.querySelectorAll('.day-cell').forEach(c => c.classList.remove('selected'));
+  element.classList.add('selected');
+
+  const [y, m, d] = dateKey.split('-');
+  selectedDateTitle.innerText = `Ficha do Evento - ${d}/${m}/${y}`;
+
+  if (!events[dateKey]) events[dateKey] = [];
+
+  if (events[dateKey].length > 0) {
+    loadEventIntoForm(0);
+  } else {
+    prepareNewEventForm();
+  }
+
+  renderTabs();
+}
+
+function renderTabs() {
+  eventTabsContainer.innerHTML = '';
+  const dayEvents = events[selectedDateKey] || [];
+
+  if (dayEvents.length === 0) {
+    eventTabsContainer.style.display = 'none';
+    return;
+  }
+
+  eventTabsContainer.style.display = 'flex';
+
+  dayEvents.forEach((ev, idx) => {
+    const tab = document.createElement('button');
+    tab.type = 'button';
+    tab.classList.add('tab-btn');
+    if (idx === activeEventIndex) tab.classList.add('active');
+    tab.innerText = ev.name ? ev.name.substring(0, 18) + '...' : `Evento ${idx + 1}`;
+    tab.addEventListener('click', () => loadEventIntoForm(idx));
+    eventTabsContainer.appendChild(tab);
   });
 
-  // EXCLUIR DO BANCO
-  deleteBtn.addEventListener('click', () => {
-    if (selectedDateKey && activeEventIndex !== null && events[selectedDateKey]) {
-      const ev = events[selectedDateKey][activeEventIndex];
-      if (confirm("Deseja realmente excluir esta ficha do Banco de Dados?")) {
-        fetch('excluir_evento.php', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: ev.id })
-        })
-        .then(res => res.json())
-        .then(res => {
-          if (res.sucesso) {
-            alert("Evento excluído!");
-            prepareNewEventForm();
-            carregarEventosDoBanco();
-          } else {
-            alert("Erro ao excluir: " + res.erro);
-          }
-        });
-      }
+  const addTab = document.createElement('button');
+  addTab.type = 'button';
+  addTab.classList.add('tab-btn', 'new-btn');
+  addTab.innerText = '+ Criar Outro Evento';
+  addTab.addEventListener('click', prepareNewEventForm);
+  eventTabsContainer.appendChild(addTab);
+}
+
+function loadEventIntoForm(index) {
+  activeEventIndex = index;
+  const ev = events[selectedDateKey][index];
+
+  setValue('clientName', ev.name);
+  setValue('eventAddress', ev.address); // Novo campo de endereço
+  setValue('eventType', ev.type || 'Casamento');
+  setValue('guestCount', ev.guests);
+  setValue('eventDescription', ev.description);
+  setValue('eventSchedule', ev.schedule);
+  setValue('menuDetailed', ev.menu);
+
+  deleteBtn.style.display = 'inline-flex';
+  printBtn.style.display = 'inline-flex';
+  renderTabs();
+}
+
+function prepareNewEventForm() {
+  activeEventIndex = null;
+  detailedForm.reset();
+  deleteBtn.style.display = 'none';
+  printBtn.style.display = 'none';
+  renderTabs();
+}
+
+detailedForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  if (!selectedDateKey) {
+    alert("Por favor, selecione uma data no calendário.");
+    return;
+  }
+
+  const currentEvent = (events[selectedDateKey] && activeEventIndex !== null) ? events[selectedDateKey][activeEventIndex] : null;
+
+  const eventData = {
+    id: currentEvent ? currentEvent.id : null,
+    data_evento: selectedDateKey,
+    name: getValue('clientName'),
+    address: getValue('eventAddress'), // Enviando o campo de endereço separado
+    type: getValue('eventType'),
+    guests: getValue('guestCount'),
+    description: getValue('eventDescription'),
+    schedule: getValue('eventSchedule'),
+    menu: getValue('menuDetailed')
+  };
+
+  fetch('P_H_P/salvar_evento.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(eventData)
+  })
+  .then(async response => {
+    const isJson = response.headers.get('content-type')?.includes('application/json');
+    const data = isJson ? await response.json() : null;
+
+    if (!response.ok) {
+      const error = (data && data.erro) || response.statusText;
+      return Promise.reject(error);
+    }
+
+    if (data && data.sucesso) {
+      alert("Ficha do evento salva com sucesso no Banco de Dados!");
+      carregarEventosDoBanco();
+    } else {
+      alert("Erro no servidor: " + (data ? data.erro : "Resposta inválida"));
+    }
+  })
+  .catch(error => {
+    alert("Erro ao conectar com o arquivo em P_H_P/salvar_evento.php:\n" + error);
+  });
+});
+
+deleteBtn.addEventListener('click', () => {
+  if (selectedDateKey && activeEventIndex !== null && events[selectedDateKey]) {
+    const ev = events[selectedDateKey][activeEventIndex];
+    if (confirm("Deseja realmente excluir esta ficha do Banco de Dados?")) {
+      fetch('P_H_P/excluir_evento.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: ev.id })
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.sucesso) {
+          alert("Evento excluído!");
+          prepareNewEventForm();
+          carregarEventosDoBanco();
+        } else {
+          alert("Erro ao excluir: " + res.erro);
+        }
+      });
+    }
+  }
+});
+
+printBtn.addEventListener('click', () => {
+  const camposTexto = ['eventDescription', 'eventSchedule', 'menuDetailed'];
+  const estilosOriginais = {};
+
+  // Otimiza texto e expande a altura de todos os textareas para mostrar o texto completo no papel
+  camposTexto.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      estilosOriginais[id] = {
+        value: el.value,
+        height: el.style.height
+      };
+      
+      // Limpa quebras excessivas
+      el.value = limparQuebrasExcessivas(el.value);
+      
+      // Ajusta a altura do campo para o tamanho real do conteúdo
+      el.style.height = 'auto';
+      el.style.height = el.scrollHeight + 'px';
     }
   });
 
-  printBtn.addEventListener('click', () => { window.print(); });
+  // Dispara a impressão do navegador
+  window.print();
 
-  document.getElementById('prevBtn').addEventListener('click', () => {
-    currentDate.setMonth(currentDate.getMonth() - 1);
-    renderCalendar();
-  });
+  // Restaura o layout original na tela do usuário
+  setTimeout(() => {
+    camposTexto.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && estilosOriginais[id]) {
+        el.value = estilosOriginais[id].value;
+        el.style.height = estilosOriginais[id].height;
+      }
+    });
+  }, 500);
+});
 
-  document.getElementById('nextBtn').addEventListener('click', () => {
-    currentDate.setMonth(currentDate.getMonth() + 1);
-    renderCalendar();
-  });
+document.getElementById('prevBtn').addEventListener('click', () => {
+  currentDate.setMonth(currentDate.getMonth() - 1);
+  renderCalendar();
+});
 
-  // Iniciar buscando os dados reais do PHP
-  carregarEventosDoBanco();
-</script>
+document.getElementById('nextBtn').addEventListener('click', () => {
+  currentDate.setMonth(currentDate.getMonth() + 1);
+  renderCalendar();
+});
 
+carregarEventosDoBanco();</script>
 </body>
 </html>
